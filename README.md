@@ -1,5 +1,5 @@
 # ecs-terraform-terragrunt
-This repository contains terraform code to deploy a simple ghost api container on ECS Fargate cluster with an application load balancer and autoscaling group
+This repository contains terraform code to deploy a simple nginx container on ECS Fargate cluster with an application load balancer and autoscaling group
 
 ## Methodology
 - I am using [terraform](https://www.terraform.io/) and [terragrunt](https://terragrunt.gruntwork.io/) for expressing the infrastructure resources in AWS cloud.
