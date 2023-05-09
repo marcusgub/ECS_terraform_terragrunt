@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "../ecs-terraform-terragrunt/terraform"
+		},
+		{
+			"path": "../ecs-terraform-terragrunt/terragrunt"
+		}
+	],
+	"settings": {}
+}
