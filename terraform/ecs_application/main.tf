@@ -43,6 +43,7 @@ resource "aws_ecs_task_definition" "ecs_task" {
   memory                    = 512
 }  
 
+
 resource "aws_ecs_service" "ecs_service" {
   name               = var.ecs_service.name
   cluster            = var.ecs_service.cluster
@@ -51,7 +52,7 @@ resource "aws_ecs_service" "ecs_service" {
   desired_count      = var.ecs_service.desired_count
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.nginx.arn
+    target_group_arn = aws_lb_target_group.ecs.arn
     container_name   = var.ecs_task.container_image_name
     container_port   = var.ecs_task.container_image_port
   }
@@ -63,13 +64,18 @@ resource "aws_ecs_service" "ecs_service" {
       var.ecs_service.egress_all_id,
       aws_security_group.ingress_api.id,
     ]
-
-    subnets = var.ecs_service.private_subnets
+    subnets         = var.ecs_service.private_subnets
+    
   }
 }
 
-resource "aws_lb_target_group" "nginx" {
-  name        = "nginx"
+resource "random_string" "lb_target_group_name" {
+  length  = 8
+  special = false
+}
+
+resource "aws_lb_target_group" "ecs" {
+  name        = "ecs-${random_string.lb_target_group_name.result}"
   port        = var.ecs_task.container_image_port
   protocol    = "HTTP"
   target_type = "ip"
@@ -87,7 +93,7 @@ resource "aws_alb_listener" "http_listener" {
   protocol          = "HTTP"
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.nginx.arn
+    target_group_arn = aws_lb_target_group.ecs.arn
   }
 }
 
@@ -120,6 +126,8 @@ module "ecs_autoscale_role" {
 
 ## --------------------------------------------------------------------------- ##
 
+// Verifica a existência do recurso aws_appautoscaling_target.ecs_target
+
 resource "aws_appautoscaling_target" "ecs_target" {
   min_capacity       = 1
   max_capacity       = 6
@@ -129,7 +137,9 @@ resource "aws_appautoscaling_target" "ecs_target" {
   role_arn           = module.ecs_autoscale_role.iam_role_arn
 }
 
+// Verifica a existência do recurso aws_appautoscaling_policy.appautoscaling_policy_cpu
 resource "aws_appautoscaling_policy" "appautoscaling_policy_cpu" {
+#  count               = data.aws_appautoscaling_policy.appautoscaling_policy_cpu ? 0 : 1
   name               = "application-scale-policy-cpu"
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_appautoscaling_target.ecs_target.resource_id
@@ -144,7 +154,9 @@ resource "aws_appautoscaling_policy" "appautoscaling_policy_cpu" {
   }
 }
 
+// Verifica a existência do recurso aws_appautoscaling_policy.appautoscaling_policy_memory
 resource "aws_appautoscaling_policy" "appautoscaling_policy_memory" {
+#  count               = data.aws_appautoscaling_policy.appautoscaling_policy_memory ? 0 : 1
   name               = "application-scale-policy-memory"
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_appautoscaling_target.ecs_target.resource_id
@@ -158,3 +170,5 @@ resource "aws_appautoscaling_policy" "appautoscaling_policy_memory" {
     target_value = 80
   }
 }
+
+

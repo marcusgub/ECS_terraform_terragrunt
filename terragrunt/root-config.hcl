@@ -1,5 +1,5 @@
 locals {
-  region = "us-east-2"
+  region = "us-west-2"
 
   version_terraform    = ">=1.2.1"
   version_terragrunt   = ">=0.37.1"
@@ -34,10 +34,10 @@ EOF
 remote_state {
   backend = "s3"
   config = {
-    bucket         = "ecs-state-bucket-test"
+    bucket         = "bucket-bkp-velero"
     key            = "${path_relative_to_include()}/terraform.tfstate"
     encrypt        = true
-    region         = local.region
+    region         = "us-east-1"
     dynamodb_table = "terraform-locks-table"
   }
 }

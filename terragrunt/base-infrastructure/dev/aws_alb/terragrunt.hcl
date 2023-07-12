@@ -18,11 +18,15 @@ locals {
 }
 
 dependency "vpc" {
-  config_path                             = "${get_parent_terragrunt_dir("stage")}/vpc_subnet_module"
+  config_path                             = "${get_parent_terragrunt_dir("root")}/base-infrastructure/dev/vpc_subnet_module"
   mock_outputs_allowed_terraform_commands = ["init", "validate", "plan"]
   mock_outputs = {
-    vpc_id                 = "some_id"
-    vpc_public_subnets_ids = ["some-id"]
+    vpc_id                  = "vpc.outputs.vpc_id"
+    vpc_public_subnets_ids  = "vpc.outputs.vpc_public_subnets_ids"
+    vpc_private_subnets_ids = "vpc.outputs.vpc_private_subnets_ids"
+  #  vpc_id                  = "some_id"
+  #  vpc_public_subnets_ids  = ["some-id"]
+  #  vpc_private_subnets_ids = ["some-id"]
   }
 }
 
@@ -63,6 +67,13 @@ inputs = {
 
   alb = {
     name               = "ghost-alb"
+    internal           = false
+    load_balancer_type = "application"
+    subnets            = dependency.vpc.outputs.vpc_public_subnets_ids
+  }
+
+  alb = {
+    name               = "vizir-alb"
     internal           = false
     load_balancer_type = "application"
     subnets            = dependency.vpc.outputs.vpc_public_subnets_ids

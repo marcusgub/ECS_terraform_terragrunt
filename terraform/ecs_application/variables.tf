@@ -26,15 +26,15 @@ variable "ecs_task" {
  
 }
 
-
 variable "ecs_service" {
   type = object({
-    name            = string
-    cluster         = string
-    launch_type     = string
-    desired_count   = number
-    egress_all_id   = string
-    private_subnets = list(string)
+    name                  = string
+    cluster               = string
+    launch_type           = string
+    desired_count         = number
+    egress_all_id         = string
+    private_subnets       = list(string)
+        
   })
 }
 

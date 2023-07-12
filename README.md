@@ -1,5 +1,5 @@
-# ecs-terraform-terragrunt
-This repository contains terraform code to deploy a simple ghost api container on ECS Fargate cluster with an application load balancer and autoscaling group
+# Ecs-terraform-terragrunt
+This repository contains terraform code to deploy a simple nginx container on ECS Fargate cluster with an application load balancer and autoscaling group by module code with terragrunt and terraform.
 
 ## Methodology
 - I am using [terraform](https://www.terraform.io/) and [terragrunt](https://terragrunt.gruntwork.io/) for expressing the infrastructure resources in AWS cloud.
@@ -18,7 +18,7 @@ __NOTE__: These instructions are for Linux
     unzip awscliv2.zip
     sudo ./aws/install
     ```
-- `terraform`: v1.2.1
+- `terraform`: >=1.2.1
 
     ```bash
     sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl
@@ -26,7 +26,7 @@ __NOTE__: These instructions are for Linux
     sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
     sudo apt-get update && sudo apt-get install terraform==1.2.1
     ```
-- `terragrunt`: v0.37.1
+- `terragrunt`: >=0.37.1
 
     ```bash
     TERRAGRUNT_VERSION=0.37.1
